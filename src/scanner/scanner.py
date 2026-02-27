@@ -30,9 +30,9 @@ except Exception:
 
 
 class Scanner:
-    """Scanner walks folders, detects media files and inserts/updates DB records.
+    """Scanner: recorre carpetas, detecta archivos y mantiene la base de datos.
 
-    No providers, no parsing beyond normalization of path.
+    Sin providers; solo normalización básica de rutas.
     """
 
     def __init__(self, db_session_factory=None, media_extensions: Iterable[str] | None = None):
@@ -42,12 +42,9 @@ class Scanner:
             self.media_exts = set(resolve_media_extensions(media_extensions))
         else:
             self.media_exts = set(get_media_extensions())
-        # configured roots where media lives
-        # Keep simple list of root Paths for compatibility with watcher and other
-        # consumers, but also attempt to read richer media_roots entries from
-        # DATA_DIR/app_config.json so a root can optionally provide a library type.
+        # Configured media roots (may include typed entries from app_config.json)
         self.roots = [Path(r).resolve() for r in (get('media_roots') or [])]
-        # Read optional typed roots from app_config.json; map resolved_path -> type
+        # Leer roots tipados opcionales y mapear path -> type
         self._root_types = {}
         try:
             from ..core.config import DATA_DIR
@@ -79,12 +76,12 @@ class Scanner:
                         continue
         except Exception:
             pass
-        # ensure configured media_roots are persisted in DB (path + optional type)
+        # Asegurar que media_roots configurados estén persistidos en la DB
         try:
             self._ensure_media_roots_persisted()
         except Exception:
             pass
-        # Merge DB-persisted roots so scans/watchers honor newly added paths
+        # Fusionar roots guardados en DB para respetar rutas añadidas
         try:
             self._merge_roots_from_db()
         except Exception:

@@ -47,9 +47,7 @@ function profileHeaders(profileId?: string): HeadersInit | undefined {
 }
 
 function _getDirectApiBases(): string[] {
-  // IMPORTANT:
-  // - On mobile, `127.0.0.1` points to the phone itself, so never use that fallback unless we're truly on localhost.
-  // - Prefer same-host port 9800 for LAN usage (release mode often serves UI on the backend port too).
+  // Prefer same-host port 9800; avoid 127.0.0.1 fallback on mobile.
   try {
     if (typeof window === 'undefined') return ['http://127.0.0.1:9800/api'];
     const host = window.location.hostname;
@@ -194,7 +192,7 @@ function mapBackendItem(it: any): MediaItem {
     type: mapMediaType(it.media_type),
     year: year as number | undefined,
     duration: _toNumber(metaDataObj?.duration) as number | undefined,
-    // Always use a browser-accessible URL for poster in the UI
+    // Poster URL used by the UI
     posterPath: posterUrl,
     thumbnailUrl: posterUrl,
     backdropUrl: manualBackdrop || metaDataObj?.backdrop_path || undefined,
@@ -213,7 +211,7 @@ function mapBackendItem(it: any): MediaItem {
 
   // Attach raw metadata and files so UI can render details and episode lists
   try {
-    // Keep the normalized metadata object (includes `episodes`), but preserve the provider raw payload under `.raw`.
+    // Preserve normalized metadata and provider raw payload
     (item as any).rawMetadata = metaDataObj || {};
     (item as any).files = files.map((f: any) => ({ filename: f.filename || f.filename, path: f.path, size: f.size, mtime: f.mtime, index: f.index ?? f.file_index }));
   } catch (e) {
@@ -224,7 +222,7 @@ function mapBackendItem(it: any): MediaItem {
 }
 
 async function fetchWithFallback(input: string, init?: RequestInit) {
-  // Accept either a full URL or a path that starts with `/api`
+  // Accept full URL or /api-relative path
   const tryUrls: string[] = [];
   const directBases = _getDirectApiBases();
   if (/^https?:\/\//.test(input)) {
@@ -243,7 +241,7 @@ async function fetchWithFallback(input: string, init?: RequestInit) {
     try {
       const res = await fetch(u, init as any);
       if (res.ok) return res;
-      // If we got a 404 from the proxy, try the next URL
+      // On 404 try next fallback URL
       lastErr = new Error(`HTTP ${res.status} ${res.statusText}`);
       if (res.status === 404) continue;
       // For other non-ok statuses, still return the response so callers can handle it

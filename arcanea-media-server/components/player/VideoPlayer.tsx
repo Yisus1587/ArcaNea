@@ -820,7 +820,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       } catch {
         // ignore
       }
-      // Small delay to allow UI to update before switching item.
+      // Small UI delay before switching item.
       window.setTimeout(() => {
         try {
           onNextItem();

@@ -24,19 +24,19 @@ export const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete }) => {
   const defaultProviderLanguage = defaultMetadataLanguageForUiLang(initialUiLang);
   const [step, setStep] = useState(1);
   
-  // Step 1: Profile
+   // Paso 1: Perfil
   const [managerName, setManagerName] = useState('');
   const [managerLanguage, setManagerLanguage] = useState(defaultUiLocale);
   const [managerPin, setManagerPin] = useState('');
   const [langTouched, setLangTouched] = useState(false);
   
-  // Step 2: Libraries
+   // Paso 2: Bibliotecas
   const [paths, setPaths] = useState<string[]>([]);
   const [pathInput, setPathInput] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
   const [tmdbLocalization, setTmdbLocalization] = useState<boolean>(systemUiLang === 'es');
 
-  // Step 3: Metadata
+   // Paso 3: Metadatos
   const [metadata, setMetadata] = useState<MetadataConfig>({
     moviesProvider: 'tmdb',
     animeProvider: 'jikan',
@@ -44,7 +44,7 @@ export const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete }) => {
     downloadImages: true,
     fetchCast: true
   });
-   // TMDB API key (optional during setup)
+   // TMDB API key (opcional)
   const [tmdbApiKey, setTmdbApiKey] = useState('');
   const [tmdbStatusMsg, setTmdbStatusMsg] = useState<string | null>(null);
    const [tmdbChecking, setTmdbChecking] = useState(false);
@@ -66,8 +66,7 @@ export const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete }) => {
     setStep(prev => prev + 1);
   };
 
-  // Keep UI language aligned with system language on first setup screen.
-  // (This does not override a user-chosen UI language stored in localStorage; it simply starts in the best default state.)
+   // Alinear idioma UI con el sistema al iniciar (no sobrescribe elección manual).
   useEffect(() => {
     // Respect explicit user choice if it already exists.
     const stored = getStoredUiLang();
@@ -76,7 +75,7 @@ export const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // When the user changes the UI language in onboarding, sync i18n + provider metadata language defaults.
+   // Al cambiar idioma en onboarding, sincronizar i18n y lenguaje proveedor.
   useEffect(() => {
     const ui = uiLangFromLocale(managerLanguage);
     const stored = getStoredUiLang();
@@ -103,12 +102,12 @@ export const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete }) => {
       pin,
       language: managerLanguage
     };
-      // persist app config to backend so setup is remembered across restarts
+      // Persistir configuración al backend
       (async () => {
          try {
              const cfg = {
                 setupComplete: true,
-               // Settings (single active UI/provider language + localization toggle)
+               // Ajustes: idioma UI/proveedor y localización
                target_lang: uiLangFromLocale(managerLanguage),
                ui_lang_source: (langTouched || getStoredUiLangSource() === 'manual' || getStoredUiLang()) ? 'manual' : 'system',
                tmdb_localization: tmdbLocalization,
@@ -118,7 +117,7 @@ export const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete }) => {
                 media_roots: paths,
              };
              await MediaService.saveAppConfig(cfg);
-            // save tmdb credentials if provided and validate
+            // Guardar credenciales TMDB (si hay) y validar
             if (tmdbApiKey && tmdbApiKey.trim()) {
                try {
                   await MediaService.adminLogin(pin);
@@ -141,10 +140,10 @@ export const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete }) => {
                   if (!proceed) return;
                }
              }
-             // backend will persist roots; notify parent
+             // Backend guarda roots; notificar al padre
              onComplete(managerProfile, paths, metadata);
          } catch (e) {
-             // fallback to in-memory completion
+             // Fallback a memoria si falla
              onComplete(managerProfile, paths, metadata);
          }
       })();

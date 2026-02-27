@@ -9,11 +9,9 @@ from ..utils.media_exts import get_media_extensions
 
 
 class WatchService:
-    """Observa rutas y encola paths nuevos/modificados para ser escaneados.
+    """Watcher: vigila rutas y encola paths nuevos/modificados para escaneo.
 
-    - No parsea nombres
-    - No llama a providers
-    - Emite rutas a `out_queue`
+    No parsea nombres ni llama providers; emite rutas a `out_queue`.
     """
 
     def __init__(self, roots: Iterable[str] | None = None, out_queue: queue.Queue | None = None):
@@ -23,13 +21,11 @@ class WatchService:
         self._thread = None
         self.poll = int(get('watch_poll_interval') or 5)
         self._exts = tuple(get_media_extensions())
-        # Avoid a massive "first poll" storm on startup: we snapshot existing files per root
-        # and only emit events for changes after initialization.
+        # Evitar "first poll" masivo al iniciar: hacemos snapshot y luego solo emitimos cambios.
         self._initialized_roots: set[str] = set()
-        # Track known media files to detect additions/modifications without rescanning everything downstream.
-        # path -> (mtime, size)
+        # Track known media files to detect additions/modifications (path -> (mtime, size)).
         self._known: dict[str, tuple[int | None, int | None]] = {}
-        # Debounce pending changes until file becomes stable (avoid Windows copy locks / partial sizes).
+        # Debounce cambios hasta que el archivo esté estable (evita copias parciales).
         # path -> (mtime, size, last_changed_ts)
         self._pending: dict[str, tuple[int | None, int | None, float]] = {}
         try:
@@ -57,13 +53,9 @@ class WatchService:
             return False
 
     def _run(self):
-        # Simple polling implementation to avoid an external dependency.
-        # Detects:
-        # - new media files (added)
-        # - modified media files (mtime/size changed)
-        #
-        # Moved/renamed files are seen as "deleted + added". Deletions are not emitted here
-        # (scanner can optionally reconcile missing files separately if desired).
+        # Polling loop (sin dependencia externa).
+        # Detecta archivos nuevos o modificados (mtime/size).
+        # Renombrados aparecen como borrado + añadido; no se emiten borrados aquí.
         while not self._stop.is_set():
             now = time.time()
             for root in list(self.roots):
