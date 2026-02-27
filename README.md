@@ -87,6 +87,5 @@ python dev_run.py --host 127.0.0.1 --port 9800
 
 ## Notas
 - Para acceso LAN, inicia backend con `0.0.0.0` y revisa firewall.
-- Antes de publicar, agrega `LICENSE` y revisa secretos en `.env`/`data`.
 
 ---
