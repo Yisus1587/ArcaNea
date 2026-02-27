@@ -1,0 +1,5 @@
+{
+  "name": "ArcaNea Media Server",
+  "description": "media streaming frontend connected to a FastAPI backend.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ArcaNea">
+  <defs>
+    <linearGradient id="g" x1="80" y1="120" x2="432" y2="392" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#06b6d4"/>
+      <stop offset="0.55" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#a855f7"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.5" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="96" fill="#0b1220"/>
+
+  <!-- Circuit "A" -->
+  <g fill="none" stroke="url(#g)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+    <!-- Outline A -->
+    <path d="M148 400 L256 120 L364 400" />
+    <path d="M198 304 H314" />
+
+    <!-- Inner circuit rails -->
+    <path d="M212 356 L256 256 L300 356" />
+    <path d="M238 316 H274" />
+
+    <!-- Left traces -->
+    <path d="M148 400 L120 400" />
+    <path d="M174 336 L120 336" />
+    <path d="M200 272 L120 272" />
+    <path d="M226 208 L160 208" />
+
+    <!-- Right traces -->
+    <path d="M364 400 L392 400" />
+    <path d="M338 336 L392 336" />
+    <path d="M312 272 L392 272" />
+    <path d="M286 208 L352 208" />
+
+    <!-- Little nodes (circles) -->
+    <circle cx="120" cy="400" r="12"/>
+    <circle cx="120" cy="336" r="10"/>
+    <circle cx="120" cy="272" r="9"/>
+    <circle cx="160" cy="208" r="8"/>
+
+    <circle cx="392" cy="400" r="12"/>
+    <circle cx="392" cy="336" r="10"/>
+    <circle cx="392" cy="272" r="9"/>
+    <circle cx="352" cy="208" r="8"/>
+
+    <circle cx="256" cy="256" r="10"/>
+    <circle cx="224" cy="304" r="7"/>
+    <circle cx="288" cy="304" r="7"/>
+  </g>
+</svg>
+

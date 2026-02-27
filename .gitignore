@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+
+node_modules/
+.vite/
+.vite-temp/
+
+data/
+.env
+.env.*
+
+dist/
+build/
+
+.DS_Store
+Thumbs.db
